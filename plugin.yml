@@ -1,0 +1,5 @@
+name: HalfSpectator
+version: 1.0
+author: bsn_nick
+description: Half creative, half spectator!
+main: me.bsn_nick.halfspectator.HalfSpectator
