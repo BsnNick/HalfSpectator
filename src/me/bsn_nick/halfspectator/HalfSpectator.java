@@ -69,17 +69,21 @@ public class HalfSpectator extends JavaPlugin implements Listener
 	@EventHandler
 	public void command(PlayerCommandPreprocessEvent event)
 	{
-		if (event.getPlayer().hasPermission("halfspectator.cmd"))
+		if (event.getPlayer().hasPermission("halfspec.cmd"))
 		{
-			if (event.getMessage().equalsIgnoreCase("/partspec"))
+			if (event.getMessage().equalsIgnoreCase("/halfspec"))
 			{
 				event.setCancelled(true);
 				
 				sendPacket(event.getPlayer());
 				
-				event.getPlayer().sendMessage(ChatColor.GOLD + "PartSpec> " + ChatColor.WHITE + "You are now partially spectating! Re-log to deactivate.");
+				event.getPlayer().sendMessage(ChatColor.GOLD + "HalfSpectator> " + ChatColor.WHITE + "You are now partially spectating! Re-log to deactivate.");
 			}
-			else if (event.getMessage().equalsIgnoreCase("/partspecall"))
+		}
+		
+		if (event.getPlayer().hasPermission("halfspec.cmdall"))
+		{
+			if (event.getMessage().equalsIgnoreCase("/halfspecall"))
 			{
 				event.setCancelled(true);
 				
@@ -87,10 +91,10 @@ public class HalfSpectator extends JavaPlugin implements Listener
 				{
 					sendPacket(players);
 					
-					event.getPlayer().sendMessage(ChatColor.GOLD + "PartSpec> " + ChatColor.WHITE + "You are now partially spectating! Re-log to deactivate.");
+					event.getPlayer().sendMessage(ChatColor.GOLD + "HalfSpectator> " + ChatColor.WHITE + "You are now partially spectating! Re-log to deactivate.");
 				}
 				
-				event.getPlayer().sendMessage(ChatColor.GOLD + "PartSpec> " + ChatColor.WHITE + "Everyone is now partially spectating!");
+				event.getPlayer().sendMessage(ChatColor.GOLD + "HalfSpectator> " + ChatColor.WHITE + "Everyone is now partially spectating!");
 			}
 		}
 	}
