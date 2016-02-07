@@ -69,7 +69,7 @@ public class HalfSpectator extends JavaPlugin implements Listener
 	@EventHandler
 	public void command(PlayerCommandPreprocessEvent event)
 	{
-		if (event.getPlayer().hasPermission("partspec.cmd"))
+		if (event.getPlayer().hasPermission("halfspectator.cmd"))
 		{
 			if (event.getMessage().equalsIgnoreCase("/partspec"))
 			{
