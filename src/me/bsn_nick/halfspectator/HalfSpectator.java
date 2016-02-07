@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class HalfSpectator extends JavaPlugin implements Listener
 {
-	private double _version = 1.0;
+	private double _version = 1.2;
 	
 	public void onEnable()
 	{
