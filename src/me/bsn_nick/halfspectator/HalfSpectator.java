@@ -18,83 +18,63 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class HalfSpectator extends JavaPlugin implements Listener
 {
-	private double _version = 1.2;
+	private String name = this.getDescription().getName();
+	private String version = this.getDescription().getVersion();
+	private String author = this.getDescription().getAuthors().get(0);
 	
 	public void onEnable()
 	{
+		System.out.println("Enabling " + name + " " + version + " by " + author + "...");
+		
 		Bukkit.getPluginManager().registerEvents(this, this);
 		
-		System.out.println("[HalfSpectator] HalfSpectator v" + _version + " by bsn_nick has been enabled!");
+		System.out.println(name + " " + version + " by " + author + " has been enabled!");
 	}
 	
 	public void onDisable()
 	{
-		System.out.println("[HalfSpectator] HalfSpectator v" + _version + " by bsn_nick has been disabled!");
+		System.out.println(name + " " + version + " by " + author + " has been disabled!");
 	}
-	
-    private Class<?> getNMSClass(String nmsClassString) throws ClassNotFoundException
-    {
-        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
-        String name = "net.minecraft.server." + version + nmsClassString;
-        Class<?> nmsClass = Class.forName(name);
-        
-        return nmsClass;
-    }
-    
-    private Object getConnection(Player player) throws SecurityException, NoSuchMethodException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
-    {
-        Method getHandle = player.getClass().getMethod("getHandle");
-        Object nmsPlayer = getHandle.invoke(player);
-        Field conField = nmsPlayer.getClass().getField("playerConnection");
-        Object con = conField.get(nmsPlayer);
-        return con;
-    }
     
 	private void sendPacket(Player player)
 	{
 		try
 		{
-			Class<?> packetClass = this.getNMSClass("PacketPlayOutGameStateChange");
-	        Constructor<?> packetConstructor = packetClass.getConstructor(int.class, float.class);
-	        Object packet = packetConstructor.newInstance(3, 3);
-	        Method sendPacket = getNMSClass("PlayerConnection").getMethod("sendPacket", this.getNMSClass("Packet"));
-	        sendPacket.invoke(this.getConnection(player), packet);
+	        Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + "." + "PlayerConnection").getMethod("sendPacket", Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + "." + "Packet")).invoke(player.getClass().getMethod("getHandle").invoke(player).getClass().getField("playerConnection").get(player.getClass().getMethod("getHandle").invoke(player)), Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + "." + "PacketPlayOutGameStateChange").getConstructor(int.class, float.class).newInstance(3, 3));
+	        
+	        player.sendMessage(ChatColor.GOLD + "HalfSpectator> " + ChatColor.WHITE + "You are now half spectator! Reconnect to deactivate.");
 		}
 		catch (Exception e)
 		{
-			System.out.println("[HalfSpectator] Error: The packet could not be sent! [1]");
+			System.out.println("[HalfSpectator] There was a problem sending the packet. See \"" + this.getDataFolder().getAbsolutePath() + "\" for more information.");
 		}
 	}
 	
 	@EventHandler
 	public void command(PlayerCommandPreprocessEvent event)
 	{
-		if (event.getPlayer().hasPermission("halfspec.cmd"))
+		if (event.getMessage().equalsIgnoreCase("/halfspec"))
 		{
-			if (event.getMessage().equalsIgnoreCase("/halfspec"))
+			if (event.getPlayer().hasPermission("halfspec.cmd"))
 			{
-				event.setCancelled(true);
+                event.setCancelled(true);
 				
 				sendPacket(event.getPlayer());
-				
-				event.getPlayer().sendMessage(ChatColor.GOLD + "HalfSpectator> " + ChatColor.WHITE + "You are now partially spectating! Re-log to deactivate.");
 			}
 		}
 		
-		if (event.getPlayer().hasPermission("halfspec.cmdall"))
+		if (event.getMessage().equalsIgnoreCase("/halfspecall"))
 		{
-			if (event.getMessage().equalsIgnoreCase("/halfspecall"))
+			if (event.getPlayer().hasPermission("halfspec.cmdall"))
 			{
 				event.setCancelled(true);
 				
 				for (Player players : Bukkit.getOnlinePlayers())
 				{
 					sendPacket(players);
-					
-					event.getPlayer().sendMessage(ChatColor.GOLD + "HalfSpectator> " + ChatColor.WHITE + "You are now partially spectating! Re-log to deactivate.");
 				}
 				
-				event.getPlayer().sendMessage(ChatColor.GOLD + "HalfSpectator> " + ChatColor.WHITE + "Everyone is now partially spectating!");
+				event.getPlayer().sendMessage(ChatColor.GOLD + "HalfSpectator> " + ChatColor.WHITE + "Everyone is now half spectator!");
 			}
 		}
 	}
